@@ -142,7 +142,7 @@ class _HomeState extends State<Home> {
                                     size: 20,
                                   ),
                                 ),
-                                Text('4.5'),
+                                Text('4.6'),
                               ],
                             ),
                           ),
