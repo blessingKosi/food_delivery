@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/src/widgets/bottom_navigation_icons.dart';
-import 'package:food_delivery/src/widgets/categories.dart';
+import 'package:food_delivery/src/helpers/screen_navigation.dart';
+import 'package:food_delivery/src/providers/product.dart';
+import 'package:food_delivery/src/providers/restaurant.dart';
+// import 'package:food_delivery/src/helpers/screen_navigation.dart';
+import 'package:food_delivery/src/providers/user.dart';
+import 'package:food_delivery/src/screens/cart.dart';
+// import 'package:food_delivery/src/screens/bag.dart';
 
-import 'package:food_delivery/src/widgets/commons.dart';
+// import 'package:food_delivery/src/widgets/bottom_navigation_icons.dart';
+//import 'package:food_delivery/src/widgets/categories.dart';
+
+import 'package:food_delivery/src/helpers/style.dart';
+import 'package:food_delivery/src/screens/category.dart';
+import 'package:food_delivery/src/screens/restaurant.dart';
+import 'package:food_delivery/src/widgets/categories.dart';
 import 'package:food_delivery/src/widgets/featured_products.dart';
-import 'package:food_delivery/src/widgets/small_floating_button.dart';
+import 'package:food_delivery/src/widgets/restaurant.dart';
+
+import 'package:provider/provider.dart';
 import '../widgets/custom_text.dart';
+import '../providers/category.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -15,251 +29,242 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context);
+    final categoryProvider = Provider.of<CategoryProvider>(context);
+    final restaurantProvider = Provider.of<RestaurantProvider>(context);
+    final productProvider = Provider.of<ProductProvider>(context);
     return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: white),
+        elevation: 0.5,
+        backgroundColor: primary,
+        title: CustomText(
+          text: 'Food App',
+          size: 22,
+          color: white,
+        ),
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(Icons.shopping_cart),
+                onPressed: () {
+                  changeScreen(context, CartScreen());
+                },
+              ),
+              Positioned(
+                top: 12,
+                right: 12,
+                child: Container(
+                  height: 12,
+                  width: 12,
+                  decoration: BoxDecoration(
+                    color: green,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Stack(
+            children: [
+              IconButton(
+                icon: Icon(Icons.notifications_none),
+                onPressed: () {},
+              ),
+              Positioned(
+                top: 12,
+                right: 12,
+                child: Container(
+                  height: 12,
+                  width: 12,
+                  decoration: BoxDecoration(
+                    color: green,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            UserAccountsDrawerHeader(
+              decoration: BoxDecoration(
+                color: primary,
+              ),
+              accountName: CustomText(
+                text: user.userModel?.name,
+                color: white,
+                weight: FontWeight.bold,
+                size: 18,
+              ),
+              accountEmail: CustomText(
+                text: user.userModel.email,
+                color: grey,
+              ),
+            ),
+            ListTile(
+              onTap: () {},
+              leading: Icon(Icons.home),
+              title: CustomText(text: 'Home'),
+            ),
+            ListTile(
+              onTap: () {},
+              leading: Icon(Icons.fastfood),
+              title: CustomText(text: 'Food I like'),
+            ),
+            ListTile(
+              onTap: () {},
+              leading: Icon(Icons.restaurant),
+              title: CustomText(text: 'Liked restaurants'),
+            ),
+            ListTile(
+              onTap: () {},
+              leading: Icon(Icons.bookmark_border),
+              title: CustomText(text: "My orders"),
+            ),
+            ListTile(
+              onTap: () {},
+              leading: Icon(Icons.shopping_cart),
+              title: CustomText(text: "Cart"),
+            ),
+            ListTile(
+              onTap: () {},
+              leading: Icon(Icons.settings),
+              title: CustomText(text: "Settings"),
+            ),
+          ],
+        ),
+      ),
       backgroundColor: white,
       body: SafeArea(
         child: ListView(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: CustomText(
-                    text: 'What would you like to eat?',
-                    size: 18,
-                  ),
+            Container(
+              decoration: BoxDecoration(
+                color: primary,
+                borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(20),
+                  bottomLeft: Radius.circular(20),
                 ),
-                Stack(
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.notifications_none),
-                      onPressed: () {},
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 8.0,
+                  right: 8,
+                  top: 8,
+                  bottom: 10,
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.search,
+                      color: red,
                     ),
-                    Positioned(
-                      top: 12,
-                      right: 12,
-                      child: Container(
-                        height: 12,
-                        width: 12,
-                        decoration: BoxDecoration(
-                            color: red,
-                            borderRadius: BorderRadius.circular(20)),
+                    title: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Find food or restaurant',
+                        border: InputBorder.none,
                       ),
                     ),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 5,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: grey[300],
-                      offset: Offset(1, 1),
-                      blurRadius: 4,
+                    trailing: Icon(
+                      Icons.filter_list,
+                      color: red,
                     ),
-                  ],
-                ),
-                child: ListTile(
-                  leading: Icon(
-                    Icons.search,
-                    color: red,
-                  ),
-                  title: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'Find food or restaurant',
-                      border: InputBorder.none,
-                    ),
-                  ),
-                  trailing: Icon(
-                    Icons.filter_list,
-                    color: red,
                   ),
                 ),
               ),
             ),
             SizedBox(
+              height: 10,
+            ),
+            Container(
+                height: 100,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: categoryProvider.categories.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () async {
+                          await productProvider.loadProductsByCategory(
+                              categoryName:
+                                  categoryProvider.categories[index].name);
+                          changeScreen(
+                            context,
+                            CategoryScreen(
+                              categoryModel: categoryProvider.categories[index],
+                            ),
+                          );
+                        },
+                        child: CategoryWidget(
+                          category: categoryProvider.categories[index],
+                        ),
+                      );
+                    })),
+            SizedBox(
               height: 5,
             ),
-            Categories(),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: CustomText(
-                text: 'Featured',
-                size: 20,
-                color: grey,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  CustomText(
+                    text: "Featured",
+                    size: 20,
+                    color: grey,
+                  ),
+                  CustomText(
+                    text: "see all",
+                    size: 14,
+                    color: primary,
+                  ),
+                ],
               ),
             ),
             Featured(),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: CustomText(
-                text: 'Popular',
-                size: 20,
-                color: grey,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Stack(
-                children: [
-                  Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image.asset('images/food.jpg'),
-                      ),
-                    ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  CustomText(
+                    text: "Popular restaurants",
+                    size: 20,
+                    color: grey,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SmallButton(Icons.favorite),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            width: 50,
-                            decoration: BoxDecoration(
-                                color: white,
-                                borderRadius: BorderRadius.circular(5)),
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(2),
-                                  child: Icon(
-                                    Icons.star,
-                                    color: Colors.yellow[900],
-                                    size: 20,
-                                  ),
-                                ),
-                                Text('4.6'),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Positioned.fill(
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Container(
-                        height: 100,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(20),
-                            bottomRight: Radius.circular(20),
-                          ),
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [
-                              Colors.black.withOpacity(0.8),
-                              Colors.black.withOpacity(0.7),
-                              Colors.black.withOpacity(0.6),
-                              Colors.black.withOpacity(0.5),
-                              Colors.black.withOpacity(0.4),
-                              Colors.black.withOpacity(0.1),
-                              Colors.black.withOpacity(0.05),
-                              Colors.black.withOpacity(0.025),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned.fill(
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
-                            child: RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: 'Pancakes \n',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  TextSpan(
-                                    text: 'by: ',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w300,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: 'Pizza hut',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                                style: TextStyle(color: white),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: '\$12.99 \n',
-                                    style: TextStyle(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                                style: TextStyle(color: white),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  CustomText(
+                    text: "see all",
+                    size: 14,
+                    color: primary,
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        height: 50,
-        color: white,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            BottomNavIcon(
-              image: 'home.png',
-              name: 'Home',
-            ),
-            BottomNavIcon(
-              image: 'target.png',
-              name: 'Near by',
-            ),
-            BottomNavIcon(
-              image: 'shopping-bag.png',
-              name: 'Cart',
-            ),
-            BottomNavIcon(
-              image: 'avatar.png',
-              name: 'Account',
+            Column(
+              children: restaurantProvider.restaurants
+                  .map((item) => GestureDetector(
+                        onTap: () async {
+                          await productProvider.loadProductsByRestaurant(
+                              restaurantId: item.id);
+                          changeScreen(
+                              context,
+                              RestaurantScreen(
+                                restaurantModel: item,
+                              ));
+                        },
+                        child: RestaurantWidget(
+                          restaurant: item,
+                        ),
+                      ))
+                  .toList(),
             ),
           ],
         ),
