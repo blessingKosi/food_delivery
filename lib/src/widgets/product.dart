@@ -105,9 +105,9 @@ class ProductWidget extends StatelessWidget {
                         GestureDetector(
                             onTap: () async {
                               await productProvider.loadProductsByRestaurant(
+                                  restaurantId: product.restaurantId.toString());
+                              await restaurantProvider.loadSingleRestaurant(
                                   restaurantId: product.restaurantId);
-                              // await restaurantProvider.loadSingleRestaurant(
-                              //     retaurantId: product.restaurantId);
                               changeScreen(
                                 context,
                                 RestaurantScreen(
@@ -116,11 +116,23 @@ class ProductWidget extends StatelessWidget {
                                 ),
                               );
                             },
-                            child: CustomText(
-                              text: product.restaurant,
-                              color: primary,
-                              weight: FontWeight.w300,
-                              size: 14,
+                            child: GestureDetector(
+                              onTap: () async {
+                                await restaurantProvider.loadSingleRestaurant(
+                                    restaurantId: product.restaurantId);
+                                changeScreen(
+                                    context,
+                                    RestaurantScreen(
+                                      restaurantModel:
+                                          restaurantProvider.restaurant,
+                                    ));
+                              },
+                              child: CustomText(
+                                text: product.restaurant,
+                                color: primary,
+                                weight: FontWeight.w300,
+                                size: 14,
+                              ),
                             )),
                       ],
                     ),
@@ -166,7 +178,7 @@ class ProductWidget extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(right: 8.0),
                         child: CustomText(
-                          text: "\$${product.price / 100}",
+                          text: "\$${product.price}",
                           weight: FontWeight.bold,
                         ),
                       ),

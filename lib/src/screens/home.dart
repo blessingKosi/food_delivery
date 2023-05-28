@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:food_delivery/src/helpers/screen_navigation.dart';
+import 'package:food_delivery/src/providers/app.dart';
 import 'package:food_delivery/src/providers/product.dart';
 import 'package:food_delivery/src/providers/restaurant.dart';
-// import 'package:food_delivery/src/helpers/screen_navigation.dart';
 import 'package:food_delivery/src/providers/user.dart';
 import 'package:food_delivery/src/screens/cart.dart';
-// import 'package:food_delivery/src/screens/bag.dart';
-
-// import 'package:food_delivery/src/widgets/bottom_navigation_icons.dart';
-//import 'package:food_delivery/src/widgets/categories.dart';
-
 import 'package:food_delivery/src/helpers/style.dart';
 import 'package:food_delivery/src/screens/category.dart';
+import 'package:food_delivery/src/screens/product_search.dart';
 import 'package:food_delivery/src/screens/restaurant.dart';
+import 'package:food_delivery/src/screens/restaurant_search.dart';
+import 'package:food_delivery/src/screens/order.dart';
 import 'package:food_delivery/src/widgets/categories.dart';
 import 'package:food_delivery/src/widgets/featured_products.dart';
+import 'package:food_delivery/src/widgets/loading.dart';
 import 'package:food_delivery/src/widgets/restaurant.dart';
-
 import 'package:provider/provider.dart';
 import '../widgets/custom_text.dart';
 import '../providers/category.dart';
@@ -29,7 +27,9 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
+    // _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: Duration(milliseconds: 200), curve: Curves.easeOut);
     final user = Provider.of<UserProvider>(context);
+    final app = Provider.of<AppProvider>(context);
     final categoryProvider = Provider.of<CategoryProvider>(context);
     final restaurantProvider = Provider.of<RestaurantProvider>(context);
     final productProvider = Provider.of<ProductProvider>(context);
@@ -52,38 +52,6 @@ class _HomeState extends State<Home> {
                   changeScreen(context, CartScreen());
                 },
               ),
-              Positioned(
-                top: 12,
-                right: 12,
-                child: Container(
-                  height: 12,
-                  width: 12,
-                  decoration: BoxDecoration(
-                    color: green,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Stack(
-            children: [
-              IconButton(
-                icon: Icon(Icons.notifications_none),
-                onPressed: () {},
-              ),
-              Positioned(
-                top: 12,
-                right: 12,
-                child: Container(
-                  height: 12,
-                  width: 12,
-                  decoration: BoxDecoration(
-                    color: green,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ),
             ],
           ),
         ],
@@ -96,179 +64,266 @@ class _HomeState extends State<Home> {
                 color: primary,
               ),
               accountName: CustomText(
-                text: user.userModel?.name,
+                text: user?.userModel?.name ?? "username loading...",
                 color: white,
                 weight: FontWeight.bold,
                 size: 18,
               ),
               accountEmail: CustomText(
-                text: user.userModel.email,
+                // text: user.userModel.email,
+                text: user.userModel?.email ?? "email loading...",
                 color: grey,
               ),
             ),
             ListTile(
-              onTap: () {},
+              onTap: () {
+                changeScreen(context, Home());
+              },
               leading: Icon(Icons.home),
               title: CustomText(text: 'Home'),
             ),
+            // ListTile(
+            //   onTap: () {},
+            //   leading: Icon(Icons.fastfood),
+            //   title: CustomText(text: 'Food I like'),
+            // ),
+            // ListTile(
+            //   onTap: () {},
+            //   leading: Icon(Icons.restaurant),
+            //   title: CustomText(text: 'Liked restaurants'),
+            // ),
             ListTile(
-              onTap: () {},
-              leading: Icon(Icons.fastfood),
-              title: CustomText(text: 'Food I like'),
-            ),
-            ListTile(
-              onTap: () {},
-              leading: Icon(Icons.restaurant),
-              title: CustomText(text: 'Liked restaurants'),
-            ),
-            ListTile(
-              onTap: () {},
+              onTap: () async {
+                await user.getOrders();
+                changeScreen(context, OrdersScreen());
+              },
               leading: Icon(Icons.bookmark_border),
               title: CustomText(text: "My orders"),
             ),
             ListTile(
-              onTap: () {},
+              onTap: () {
+                changeScreen(context, CartScreen());
+              },
               leading: Icon(Icons.shopping_cart),
               title: CustomText(text: "Cart"),
             ),
+            // ListTile(
+            //   onTap: () {},
+            //   leading: Icon(Icons.settings),
+            //   title: CustomText(text: "Settings"),
+            // ),
             ListTile(
-              onTap: () {},
-              leading: Icon(Icons.settings),
-              title: CustomText(text: "Settings"),
+              onTap: () async {
+                user.signOut();
+              },
+              leading: Icon(Icons.logout),
+              title: CustomText(text: "Signout"),
             ),
           ],
         ),
       ),
       backgroundColor: white,
-      body: SafeArea(
-        child: ListView(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: primary,
-                borderRadius: BorderRadius.only(
-                  bottomRight: Radius.circular(20),
-                  bottomLeft: Radius.circular(20),
-                ),
+      body: app.isLoading
+          ? Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Center(child: Loading()),
+                ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 8.0,
-                  right: 8,
-                  top: 8,
-                  bottom: 10,
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.search,
-                      color: red,
-                    ),
-                    title: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Find food or restaurant',
-                        border: InputBorder.none,
+            )
+          : SafeArea(
+              child: ListView(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: primary,
+                      borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(20),
+                        bottomLeft: Radius.circular(20),
                       ),
                     ),
-                    trailing: Icon(
-                      Icons.filter_list,
-                      color: red,
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left: 8.0,
+                        right: 8,
+                        top: 8,
+                        bottom: 10,
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.search,
+                            color: red,
+                          ),
+                          title: TextField(
+                            textInputAction: TextInputAction.search,
+                            onSubmitted: (pattern) async {
+                              app.changeLoading();
+                              if (app.search == SearchBy.PRODUCTS) {
+                                await productProvider.search(
+                                    productName: pattern);
+                                changeScreen(context, ProductSearchScreen());
+                              } else {
+                                await restaurantProvider.search(name: pattern);
+                                changeScreen(context, RestaurantSearchScreen());
+                              }
+
+                              app.changeLoading();
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Find food or restaurant',
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-                height: 100,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: categoryProvider.categories.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () async {
-                          await productProvider.loadProductsByCategory(
-                              categoryName:
-                                  categoryProvider.categories[index].name);
-                          changeScreen(
-                            context,
-                            CategoryScreen(
-                              categoryModel: categoryProvider.categories[index],
-                            ),
-                          );
-                        },
-                        child: CategoryWidget(
-                          category: categoryProvider.categories[index],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      CustomText(
+                        text: 'Search by:',
+                        color: grey,
+                        weight: FontWeight.w300,
+                      ),
+                      DropdownButton<String>(
+                        value: app.filterBy,
+                        style: TextStyle(
+                            color: primary, fontWeight: FontWeight.w300),
+                        icon: Icon(
+                          Icons.filter_list,
+                          color: primary,
                         ),
-                      );
-                    })),
-            SizedBox(
-              height: 5,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  CustomText(
-                    text: "Featured",
-                    size: 20,
-                    color: grey,
+                        elevation: 0,
+                        onChanged: (value) {
+                          if (value == 'Products') {
+                            app.changeSearchBy(newSearchBy: SearchBy.PRODUCTS);
+                          } else {
+                            app.changeSearchBy(
+                                newSearchBy: SearchBy.RESTAURANTS);
+                          }
+                        },
+                        items: <String>['Products', 'Restaurants']
+                            .map<DropdownMenuItem<String>>(
+                          (String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          },
+                        ).toList(),
+                      ),
+                    ],
                   ),
-                  CustomText(
-                    text: "see all",
-                    size: 14,
-                    color: primary,
+                  Divider(),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: CustomText(
+                      text: "Categories",
+                      size: 20,
+                      color: grey,
+                    ),
+                  ),
+                  Container(
+                      height: 100,
+                      child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: categoryProvider.categories.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () async {
+                                //app.changeLoading();
+                                await productProvider.loadProductsByCategory(
+                                    categoryName: categoryProvider
+                                        .categories[index].name);
+                                //app.changeLoading();
+                                changeScreen(
+                                  context,
+                                  CategoryScreen(
+                                    categoryModel:
+                                        categoryProvider.categories[index],
+                                  ),
+                                );
+                              },
+                              child: CategoryWidget(
+                                category: categoryProvider.categories[index],
+                              ),
+                            );
+                          })),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        CustomText(
+                          text: "Featured",
+                          size: 20,
+                          color: grey,
+                        ),
+                        // will have to make a list of all featured products soon...
+                        CustomText(
+                          text: "see all",
+                          size: 14,
+                          color: primary,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Featured(),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        CustomText(
+                          text: "Popular restaurants",
+                          size: 20,
+                          color: grey,
+                        ),
+                        // will have to make a list of all Popular restaurants soon...
+                        CustomText(
+                          text: "see all",
+                          size: 14,
+                          color: primary,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Column(
+                    children: restaurantProvider.restaurants
+                        .map((item) => GestureDetector(
+                              onTap: () async {
+                                app.changeLoading();
+                                await productProvider.loadProductsByRestaurant(
+                                    restaurantId: item.id);
+                                app.changeLoading();
+                                changeScreen(
+                                    context,
+                                    RestaurantScreen(
+                                      restaurantModel: item,
+                                    ));
+                              },
+                              child: RestaurantWidget(
+                                restaurant: item,
+                              ),
+                            ))
+                        .toList(),
                   ),
                 ],
               ),
             ),
-            Featured(),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  CustomText(
-                    text: "Popular restaurants",
-                    size: 20,
-                    color: grey,
-                  ),
-                  CustomText(
-                    text: "see all",
-                    size: 14,
-                    color: primary,
-                  ),
-                ],
-              ),
-            ),
-            Column(
-              children: restaurantProvider.restaurants
-                  .map((item) => GestureDetector(
-                        onTap: () async {
-                          await productProvider.loadProductsByRestaurant(
-                              restaurantId: item.id);
-                          changeScreen(
-                              context,
-                              RestaurantScreen(
-                                restaurantModel: item,
-                              ));
-                        },
-                        child: RestaurantWidget(
-                          restaurant: item,
-                        ),
-                      ))
-                  .toList(),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

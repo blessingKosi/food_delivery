@@ -111,7 +111,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     child: GestureDetector(
                       onTap: () async {
                         if (!await userProvider.signUp()) {
-                          _key.currentState.showSnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Registration failed')));
                           return;
                         }

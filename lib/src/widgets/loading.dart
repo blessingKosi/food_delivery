@@ -7,14 +7,19 @@ class Loading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: white,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SpinKitFadingCircle(
-            color: black,
-            size: 30.0,
-          ),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: SpinKitFadingCircle(
+                color: black,
+                size: 30.0,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

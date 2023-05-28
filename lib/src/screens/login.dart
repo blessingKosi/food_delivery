@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: GestureDetector(
                       onTap: () async {
                         if (!await userProvider.signIn()) {
-                          _key.currentState.showSnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Login failed')));
                           return;
                         }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:food_delivery/src/helpers/screen_navigation.dart';
+import 'package:food_delivery/src/screens/details.dart';
 
 import 'package:food_delivery/src/widgets/product.dart';
 import 'package:food_delivery/src/helpers/style.dart';
@@ -182,7 +184,8 @@ class RestaurantScreen extends StatelessWidget {
                   size: 18,
                 ),
                 Container(
-                  child: FlatButton.icon(
+                  // ignore: deprecated_member_use
+                  child: TextButton.icon(
                     onPressed: () {},
                     icon: Icon(Icons.restaurant_menu),
                     label: CustomText(text: "Book Now"),
@@ -197,11 +200,11 @@ class RestaurantScreen extends StatelessWidget {
                   .map(
                     (item) => GestureDetector(
                       onTap: () {
-                        // changeScreen(
-                        //     context,
-                        //     Details(
-                        //       product: item,
-                        //     ));
+                        changeScreen(
+                            context,
+                            Details(
+                              product: item,
+                            ));
                       },
                       child: ProductWidget(
                         product: item,

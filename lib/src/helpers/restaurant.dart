@@ -22,4 +22,24 @@ class RestaurantServices {
           .then((document) {
         return RestaurantModel.fromSnapsot(document);
       });
+
+  Future<List<RestaurantModel>> searchRestaurant({String restaurantName}) {
+    String searchKey = restaurantName[0].toUpperCase() +
+        restaurantName.substring(1); // converting first character to uppercase
+    return _firestore
+        .collection(collection)
+        .orderBy('name')
+        .startAt([searchKey])
+        .endAt([searchKey + '\uf8ff'])
+        .get()
+        .then(
+          (result) {
+            List<RestaurantModel> restaurants = [];
+            for (DocumentSnapshot restaurant in result.docs) {
+              restaurants.add(RestaurantModel.fromSnapsot(restaurant));
+            }
+            return restaurants;
+          },
+        );
+  }
 }

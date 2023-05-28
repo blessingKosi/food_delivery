@@ -16,25 +16,21 @@ class RestaurantWidget extends StatelessWidget {
       padding: const EdgeInsets.only(top: 2.0, left: 2, right: 2, bottom: 4),
       child: Stack(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20.0),
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Loading(),
-                    ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20.0),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Loading(),
                   ),
-                  Center(
-                    child: FadeInImage.memoryNetwork(
-                        placeholder: kTransparentImage,
-                        image: restaurant.image),
-                  ),
-                ],
-              ),
+                ),
+                Center(
+                  child: FadeInImage.memoryNetwork(
+                      placeholder: kTransparentImage, image: restaurant.image),
+                ),
+              ],
             ),
           ),
           Padding(

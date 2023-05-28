@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:food_delivery/src/providers/app.dart';
 import 'package:food_delivery/src/providers/category.dart';
 import 'package:food_delivery/src/providers/product.dart';
 import 'package:food_delivery/src/providers/restaurant.dart';
 import 'package:food_delivery/src/providers/user.dart';
 import 'package:food_delivery/src/screens/home.dart';
 
-//import 'package:food_delivery/src/screens/home.dart';
 import 'package:food_delivery/src/screens/login.dart';
-import 'package:food_delivery/src/widgets/loading.dart';
+import 'package:food_delivery/src/screens/splash.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -27,6 +27,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(value: CategoryProvider.initialize()),
         ChangeNotifierProvider.value(value: RestaurantProvider.initialize()),
         ChangeNotifierProvider.value(value: ProductProvider.initialize()),
+        ChangeNotifierProvider.value(
+          value: AppProvider(),
+        )
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -46,7 +49,7 @@ class ScreensController extends StatelessWidget {
     final auth = Provider.of<UserProvider>(context);
     switch (auth.status) {
       case Status.Unauthenticated:
-        return Loading();
+        return Splash();
       case Status.Unauthenticated:
       case Status.Authenticating:
         return LoginScreen();
